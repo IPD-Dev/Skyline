@@ -137,7 +137,7 @@ client.on("interactionCreate", (int) => {
 			var mem2 = int.guild.members.cache.get(int.options.getUser("user").id);
 			mem2.kick(int.options.getString("reason"));
 		} else if(int.commandName == "bonk"){
-			int.reply("<@!" + int.options.getUser("user").id + "> BONK!");
+			int.reply("<@!" + int.options.getUser("user").id + "> <a:getbonked:912473583488499743>");
 		}
 	}
 });
