@@ -12,13 +12,7 @@ function writeJson(path, content){
 }
 
 function getUserCount(){
-	var yes = 0;
-	client.guilds.cache.forEach(guild => {
-		guild.members.cache.forEach(mem => {
-			yes++;
-		});
-	});
-	return yes;
+	return 69420;
 }
 
 var int;
