@@ -1,7 +1,6 @@
 const dc = require("discord.js");
 const client = new dc.Client({intents: ["GUILDS"]});
 const fs = require("fs");
-
 client.login(JSON.parse(fs.readFileSync("token.json").toString())["token"]);
 
 function readJson(path){
@@ -12,22 +11,15 @@ function writeJson(path, content){
 	fs.writeFileSync(path, JSON.stringify(content));
 }
 
-function getUserCount(){
-	var memCount = 0;
-	client.guilds.cache.forEach(guild => {
-		memCount += guild.memberCount;
-	});
-	return memCount;
-}
-
-var int;
+var inter;
 function startLoop(){
 	try {
 		clearInterval(int);
-		int = setInterval(()=>{
-			client.user.setActivity("over " + getUserCount() + " people", {type: "WATCHING"});
+		console
+		inter = setInterval(()=>{
+			client.user.setActivity("over " + client.users.cache.length, {type: "WATCHING"});
 		},5000);
-	} catch(e){console.log(e)}
+	} catch(e){}
 }
 
 function stopLoop(){
@@ -37,7 +29,6 @@ function stopLoop(){
 }
 
 client.on("ready", () => {
-	startLoop();
 	console.log("I'm alive");
 	client.guilds.cache.get("879081086817288264").commands.set([
 		{
@@ -61,47 +52,6 @@ client.on("ready", () => {
 					required: false
 				}
 			]
-		},
-		{
-			name: "eval",
-			description: "Evaluation of JS",
-			options: [
-				{
-					name: "code",
-					description: "Code to exec",
-					type: 3
-				}
-			]
-		},
-		{
-			name: "kick",
-			description: "Kick members.",
-			options: [
-				{
-					name: "user",
-					description: "User to kick",
-					type: 6,
-					required: true
-				},
-				{
-					name: "reason",
-					description: "Reason to kick them",
-					type: 3,
-					required: false
-				}
-			]
-		},
-		{
-			name: "bonk",
-			description: "Bonks someone",
-			options: [
-				{
-					name: "user",
-					description: "Whomst to bonk",
-					type: 6,
-					required: true
-				}
-			]
 		}
 	]).then(cmds => {
 		console.log("Finished loading all commands");
@@ -123,21 +73,6 @@ client.on("interactionCreate", (int) => {
 				startLoop();
 				int.reply("Resat activity, and started activity loop.");
 			}
-		} else if(int.commandName == "eval"){
-			var devs = readJson("devs.json");
-			if(!devs.devlist.includes(int.user.id)) return int.reply("You shall not pass");
-			try{
-				int.reply(new String(eval(int.options.getString("code"))).valueOf()).catch(e => {});
-			} catch(e){
-				int.reply(e.stack).catch(e => {});
-			};
-		} else if(int.commandName == "kick"){
-			var mem = int.guild.members.cache.get(int.user.id);
-			if(!mem.permissions.has("KICK_MEMBERS")) return int.reply("You tried kicking without perms? You're sus");
-			var mem2 = int.guild.members.cache.get(int.options.getUser("user").id);
-			mem2.kick(int.options.getString("reason"));
-		} else if(int.commandName == "bonk"){
-			int.reply("<@!" + int.options.getUser("user").id + "> BONK!");
 		}
 	}
 });
