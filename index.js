@@ -107,6 +107,10 @@ client.on("ready", () => {
 		{
 			name: "cat",
 			description: "Meow"
+		},
+		{
+			name: "apis",
+			description: "Shows all APIs"
 		}
 	]).then(cmds => {
 		console.log("Finished loading all commands");
@@ -147,6 +151,15 @@ client.on("interactionCreate", (int) => {
 			axios("https://api.thecatapi.com/v1/images/search").then((res) => {
 				int.reply({embeds: [{title: "Meow", image: {url: res.data[0].url}, color: "#ec76fd"}]});
 			});
+		} else if(int.commandName == "apis"){
+			var apis = {
+				"Cat API": "https://api.thecatapi.com/v1/images/search"
+			};
+			var apiArray = [];
+			Object.keys(apis).forEach(key => {
+				apiArray.push(key + ": " + apis[key]);
+			});
+			int.reply("Here are all the APIs used in the bot: \n" + apiArray.join("\n"));
 		}
 	}
 });
