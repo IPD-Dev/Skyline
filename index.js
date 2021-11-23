@@ -1,4 +1,5 @@
 const dc = require("discord.js");
+const axios = require("axios").default;
 const client = new dc.Client({intents: ["GUILDS"]});
 const fs = require("fs");
 
@@ -102,6 +103,10 @@ client.on("ready", () => {
 					required: true
 				}
 			]
+		},
+		{
+			name: "cat",
+			description: "Meow"
 		}
 	]).then(cmds => {
 		console.log("Finished loading all commands");
@@ -138,6 +143,10 @@ client.on("interactionCreate", (int) => {
 			mem2.kick(int.options.getString("reason"));
 		} else if(int.commandName == "bonk"){
 			int.reply(`*${int.user.username} bonked ${int.options.getUser("user").username}* <a:getbonked:912473583488499743>`);
+		} else if(int.commandName == "cat"){
+			axios("https://api.thecatapi.com/v1/images/search").then((res) => {
+				int.reply({embeds: [{title: "Meow", image: {url: res.data[0].url}, color: "#ec76fd"}]});
+			});
 		}
 	}
 });
