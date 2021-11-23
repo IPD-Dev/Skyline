@@ -37,6 +37,16 @@ function stopLoop(){
 	} catch(e){}
 }
 
+var Eco = client.users.cache.random();
+client.users.fetch("831598877320413244").then(usr => {
+	Eco = usr;
+});
+
+var Helixu = client.users.cache.random();
+client.users.fetch("287885666941927424").then(usr => {
+	Helixu = usr;
+});
+
 client.on("ready", () => {
 	startLoop();
 	console.log("I'm alive");
@@ -95,6 +105,24 @@ client.on("ready", () => {
 			]
 		},
 		{
+			name: "ban",
+			description: "Ban members.",
+			options: [
+				{
+					name: "user",
+					description: "User to ban",
+					type: 6,
+					required: true
+				},
+				{
+					name: "reason",
+					description: "Reason to ban them",
+					type: 3,
+					required: false
+				}
+			]
+		},
+		{
 			name: "bonk",
 			description: "Bonks someone",
 			options: [
@@ -147,7 +175,25 @@ client.on("interactionCreate", (int) => {
 			var mem = int.guild.members.cache.get(int.user.id);
 			if(!mem.permissions.has("KICK_MEMBERS")) return int.reply("You tried kicking without perms? You're sus");
 			var mem2 = int.guild.members.cache.get(int.options.getUser("user").id);
-			mem2.kick(int.options.getString("reason"));
+			mem2.kick(int.options.getString("reason")).then(() => {
+				var reason = "No reason specified.";
+				if(int.options.getString("reason") !== null) reason = int.options.getString("reason");
+				int.reply("Successfully kicked <@!" + int.options.getUser("user").id + "> with reason `" + reason + "`.");
+			}).catch(e => {
+				int.reply("An error occured with my code, please report this to " + Eco.tag + " or " + Helixu.tag + ": ```js\n" + e.stack + "```");
+			});
+		} else if(int.commandName == "ban"){
+			if(!int.guild) return int.reply("This command cannot be used outside a guild.");
+			var mem = int.guild.members.cache.get(int.user.id);
+			if(!mem.permissions.has("BAN_MEMBERS")) return int.reply("You tried banning without perms? You're sus");
+			var mem2 = int.guild.members.cache.get(int.options.getUser("user").id);
+			mem2.ban(int.options.getString("reason")).then(() => {
+				var reason = "No reason specified.";
+				if(int.options.getString("reason") !== null) reason = int.options.getString("reason");
+				int.reply("Successfully banned <@!" + int.options.getUser("user").id + "> with reason `" + reason + "`.");
+			}).catch(e => {
+				int.reply("An error occured with my code, please report this to " + Eco.tag + " or " + Helixu.tag + ": ```js\n" + e.stack + "```");
+			});
 		} else if(int.commandName == "bonk"){
 			int.reply(`*${int.user.username} bonked ${int.options.getUser("user").username}* <a:getbonked:912473583488499743>`);
 		} else if(int.commandName == "cat"){
