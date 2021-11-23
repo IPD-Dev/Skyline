@@ -153,7 +153,7 @@ client.on("interactionCreate", (int) => {
 			int.reply(`Yup, I'm alive (${client.ws.ping} ms)`);
 		} else if(int.commandName == "activity"){
 			var devs = readJson("devs.json");
-			if(!devs.devlist.includes(int.user.id)) return int.reply("You shall not pass");
+			if(!devs.devlist.includes(int.user.id)) return int.reply(":x: Access denied");
 			if(int.options.getString("activity") !== null){
 				stopLoop();
 				client.user.setActivity(int.options.getString("activity"), {type: int.options.getString("type")});
@@ -164,16 +164,16 @@ client.on("interactionCreate", (int) => {
 			}
 		} else if(int.commandName == "eval"){
 			var devs = readJson("devs.json");
-			if(!devs.devlist.includes(int.user.id)) return int.reply("You shall not pass");
+			if(!devs.devlist.includes(int.user.id)) return int.reply(":x: Access denied");
 			try{
 				int.reply(new String(eval(int.options.getString("code"))).valueOf()).catch(e => {});
 			} catch(e){
 				int.reply(e.stack).catch(e => {});
 			};
 		} else if(int.commandName == "kick"){
-			if(!int.guild) return int.reply("This command cannot be used outside a guild.");
+			if(!int.guild) return int.reply(":x: This command cannot be used outside a guild.");
 			var mem = int.guild.members.cache.get(int.user.id);
-			if(!mem.permissions.has("KICK_MEMBERS")) return int.reply("You tried kicking without perms? You're sus");
+			if(!mem.permissions.has("KICK_MEMBERS")) return int.reply(":x: You do not have permissions to kick users.");
 			var mem2 = int.guild.members.cache.get(int.options.getUser("user").id);
 			mem2.kick(int.options.getString("reason")).then(() => {
 				var reason = "No reason specified.";
@@ -183,9 +183,9 @@ client.on("interactionCreate", (int) => {
 				int.reply("An error occured with my code, please report this to " + Eco.tag + " or " + Helixu.tag + ": ```js\n" + e.stack + "```");
 			});
 		} else if(int.commandName == "ban"){
-			if(!int.guild) return int.reply("This command cannot be used outside a guild.");
+			if(!int.guild) return int.reply(":x: This command cannot be used outside a guild.");
 			var mem = int.guild.members.cache.get(int.user.id);
-			if(!mem.permissions.has("BAN_MEMBERS")) return int.reply("You tried banning without perms? You're sus");
+			if(!mem.permissions.has("BAN_MEMBERS")) return int.reply(":x: You do not have the permissions to ban users.");
 			var mem2 = int.guild.members.cache.get(int.options.getUser("user").id);
 			mem2.ban(int.options.getString("reason")).then(() => {
 				var reason = "No reason specified.";
