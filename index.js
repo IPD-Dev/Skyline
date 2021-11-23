@@ -40,7 +40,9 @@ function stopLoop(){
 client.on("ready", () => {
 	startLoop();
 	console.log("I'm alive");
-	client.guilds.cache.get("879081086817288264").commands.set([
+	var obj = client.application.commands;
+	if(process.argv[2]) obj = client.guilds.cache.get("879081086817288264").commands; 
+	obj.set([
 		{
 			name: "ping",
 			description: "Am alive???"
@@ -141,6 +143,7 @@ client.on("interactionCreate", (int) => {
 				int.reply(e.stack).catch(e => {});
 			};
 		} else if(int.commandName == "kick"){
+			if(!int.guild) return int.reply("This command cannot be used outside a guild.");
 			var mem = int.guild.members.cache.get(int.user.id);
 			if(!mem.permissions.has("KICK_MEMBERS")) return int.reply("You tried kicking without perms? You're sus");
 			var mem2 = int.guild.members.cache.get(int.options.getUser("user").id);
