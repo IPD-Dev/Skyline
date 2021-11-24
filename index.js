@@ -139,6 +139,10 @@ client.on("ready", () => {
 			description: "Meow"
 		},
 		{
+			name: "fox",
+			description: "What does it say?"
+		},
+		{
 			name: "apis",
 			description: "Shows all APIs"
 		}
@@ -199,6 +203,10 @@ client.on("interactionCreate", (int) => {
 		} else if(int.commandName == "cat"){
 			axios("https://api.thecatapi.com/v1/images/search").then((res) => {
 				int.reply({embeds: [{title: "Meow", image: {url: res.data[0].url}, color: "#ec76fd"}]});
+			});
+		} else if(int.commandName == "fox"){
+			axios("https://randomfox.ca/floof/").then(res => {
+				int.reply({embeds: [{title: "uwu", image: {url: res.data.image}, color: "#ffa500"}]});
 			});
 		} else if(int.commandName == "apis"){
 			var apis = {
