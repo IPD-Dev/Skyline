@@ -210,7 +210,8 @@ client.on("interactionCreate", (int) => {
 			});
 		} else if(int.commandName == "apis"){
 			var apis = {
-				"Cat API": "https://api.thecatapi.com/v1/images/search"
+				"Cat API": "https://api.thecatapi.com/v1/images/search",
+				"Fox API": "https://randomfox.ca/floof/"
 			};
 			var apiArray = [];
 			Object.keys(apis).forEach(key => {
