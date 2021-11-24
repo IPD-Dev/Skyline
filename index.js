@@ -26,7 +26,7 @@ function startLoop(){
 	try {
 		clearInterval(int);
 		int = setInterval(()=>{
-			client.user.setActivity("over " + getUserCount() + " people", {type: "WATCHING"});
+			client.user.setActivity(getUserCount() + " people", {type: "STREAMING", name: "funny", url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"});
 		},5000);
 	} catch(e){console.log(e)}
 }
