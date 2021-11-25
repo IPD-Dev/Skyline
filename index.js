@@ -193,7 +193,7 @@ client.on("interactionCreate", (int) => {
 			var mem2 = int.guild.members.cache.get(int.options.getUser("user").id);
 			var reason = "No reason specified.";
 			if(int.options.getString("reason") !== null) reason = int.options.getString("reason");
-			mem2.ban(reason).then(() => {
+			mem2.ban({reason}).then(() => {
 				int.reply("Successfully banned <@!" + int.options.getUser("user").id + "> with reason `" + reason + "`.");
 			}).catch(e => {
 				int.reply("An error occured with my code, please report this to " + Eco.tag + " or " + Helixu.tag + ": ```js\n" + e.stack + "```");
