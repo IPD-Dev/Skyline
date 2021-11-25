@@ -191,9 +191,9 @@ client.on("interactionCreate", (int) => {
 			var mem = int.guild.members.cache.get(int.user.id);
 			if(!mem.permissions.has("BAN_MEMBERS")) return int.reply(":x: You do not have the permissions to ban users.");
 			var mem2 = int.guild.members.cache.get(int.options.getUser("user").id);
-			mem2.ban(int.options.getString("reason")).then(() => {
-				var reason = "No reason specified.";
-				if(int.options.getString("reason") !== null) reason = int.options.getString("reason");
+			var reason = "No reason specified.";
+			if(int.options.getString("reason") !== null) reason = int.options.getString("reason");
+			mem2.ban(reason).then(() => {
 				int.reply("Successfully banned <@!" + int.options.getUser("user").id + "> with reason `" + reason + "`.");
 			}).catch(e => {
 				int.reply("An error occured with my code, please report this to " + Eco.tag + " or " + Helixu.tag + ": ```js\n" + e.stack + "```");
