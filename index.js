@@ -51,7 +51,7 @@ client.on("ready", () => {
 	startLoop();
 	console.log("I'm alive");
 	var obj = client.application.commands;
-	if(process.argv[2]) obj = client.guilds.cache.get("879081086817288264").commands; 
+	if(process.argv[2]) obj = client.guilds.cache.get(process.argv[2]).commands; 
 	obj.set([
 		{
 			name: "ping",
@@ -145,6 +145,10 @@ client.on("ready", () => {
 		{
 			name: "apis",
 			description: "Shows all APIs"
+		},
+		{
+			name: "invite",
+			description: "Provides an invite link for the bot"
 		}
 	]).then(cmds => {
 		console.log("Finished loading all commands");
@@ -230,6 +234,9 @@ client.on("interactionCreate", (int) => {
 				apiArray.push(key + ": " + apis[key]);
 			});
 			int.reply("Here are all the APIs used in the bot: \n" + apiArray.join("\n"));
+		} else if(int.commandName == "invite"){
+			var invite = "https://discord.com/api/oauth2/authorize?client_id=679066447942516760&permissions=397434776774&scope=bot%20applications.commands";
+			int.reply("To invite me to your own server, click [here](" + invite + ").");
 		}
 	} else if(int.isButton()){
 		if(int.customId.startsWith("cat")){
