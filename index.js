@@ -201,12 +201,24 @@ client.on("interactionCreate", (int) => {
 		} else if(int.commandName == "bonk"){
 			int.reply(`*${int.user.username} bonked ${int.options.getUser("user").username}* <a:getbonked:912473583488499743>`);
 		} else if(int.commandName == "cat"){
+			const row = new dc.MessageActionRow();
+			const btn = new dc.MessageButton();
+			btn.setCustomId("cat-" + Math.round(Math.random()*99999));
+			btn.setLabel("New Image");
+			btn.setStyle("PRIMARY");
+			row.addComponents(btn);
 			axios("https://api.thecatapi.com/v1/images/search").then((res) => {
-				int.reply({embeds: [{title: "Meow", image: {url: res.data[0].url}, color: "#ec76fd"}]});
+				int.reply({embeds: [{title: "Meow", image: {url: res.data[0].url}, color: "#ec76fd"}], components: [row]});
 			});
 		} else if(int.commandName == "fox"){
+			const row = new dc.MessageActionRow();
+			const btn = new dc.MessageButton();
+			btn.setCustomId("fox-" + Math.round(Math.random()*99999));
+			btn.setLabel("New Image");
+			btn.setStyle("PRIMARY");
+			row.addComponents(btn);
 			axios("https://randomfox.ca/floof/").then(res => {
-				int.reply({embeds: [{title: "uwu", image: {url: res.data.image}, color: "#ffa500"}]});
+				int.reply({embeds: [{title: "uwu", image: {url: res.data.image}, color: "#ffa500"}], components: [row]});
 			});
 		} else if(int.commandName == "apis"){
 			var apis = {
@@ -218,6 +230,28 @@ client.on("interactionCreate", (int) => {
 				apiArray.push(key + ": " + apis[key]);
 			});
 			int.reply("Here are all the APIs used in the bot: \n" + apiArray.join("\n"));
+		}
+	} else if(int.isButton()){
+		if(int.customId.startsWith("cat")){
+			const row = new dc.MessageActionRow();
+			const btn = new dc.MessageButton();
+			btn.setCustomId("cat-" + Math.round(Math.random()*99999));
+			btn.setLabel("New Image");
+			btn.setStyle("PRIMARY");
+			row.addComponents(btn);
+			axios("https://api.thecatapi.com/v1/images/search").then((res) => {
+				int.message.edit({embeds: [{title: "Meow", image: {url: res.data[0].url}, color: "#ec76fd"}], components: [row]});
+			});
+		} else if(int.customId.startsWith("fox")){
+			const row = new dc.MessageActionRow();
+			const btn = new dc.MessageButton();
+			btn.setCustomId("fox-" + Math.round(Math.random()*99999));
+			btn.setLabel("New Image");
+			btn.setStyle("PRIMARY");
+			row.addComponents(btn);
+			axios("https://randomfox.ca/floof/").then(res => {
+				int.message.edit({embeds: [{title: "uwu", image: {url: res.data.image}, color: "#ffa500"}], components: [row]});
+			});
 		}
 	}
 });
