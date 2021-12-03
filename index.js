@@ -240,6 +240,7 @@ client.on("interactionCreate", (int) => {
 		}
 	} else if(int.isButton()){
 		if(int.customId.startsWith("cat")){
+			int.update(int);
 			const row = new dc.MessageActionRow();
 			const btn = new dc.MessageButton();
 			btn.setCustomId("cat-" + Math.round(Math.random()*99999));
@@ -250,6 +251,7 @@ client.on("interactionCreate", (int) => {
 				int.message.edit({embeds: [{title: "Meow", image: {url: res.data[0].url}, color: "#ec76fd"}], components: [row]});
 			});
 		} else if(int.customId.startsWith("fox")){
+			int.update(int);
 			const row = new dc.MessageActionRow();
 			const btn = new dc.MessageButton();
 			btn.setCustomId("fox-" + Math.round(Math.random()*99999));
