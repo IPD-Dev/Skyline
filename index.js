@@ -183,6 +183,8 @@ client.on("interactionCreate", (int) => {
 			var mem = int.guild.members.cache.get(int.user.id);
 			if(!mem.permissions.has("KICK_MEMBERS")) return int.reply(":x: You do not have permissions to kick users.");
 			var mem2 = int.guild.members.cache.get(int.options.getUser("user").id);
+			if(!mem.kickable) return int.reply(":x: I cannot kick this user!");
+			if(mem == mem2) return int.reply(":x: You cannot kick yourself!");
 			mem2.kick(int.options.getString("reason")).then(() => {
 				var reason = "No reason specified.";
 				if(int.options.getString("reason") !== null) reason = int.options.getString("reason");
@@ -196,6 +198,8 @@ client.on("interactionCreate", (int) => {
 			if(!mem.permissions.has("BAN_MEMBERS")) return int.reply(":x: You do not have the permissions to ban users.");
 			var mem2 = int.guild.members.cache.get(int.options.getUser("user").id);
 			var reason = "No reason specified.";
+			if(!mem.bannable) return int.reply(":x: I cannot ban this user!");
+			if(mem == mem2) return int.reply(":x: You cannot ban yourself!");
 			if(int.options.getString("reason") !== null) reason = int.options.getString("reason");
 			mem2.ban({reason}).then(() => {
 				int.reply("Successfully banned <@!" + int.options.getUser("user").id + "> with reason `" + reason + "`.");
