@@ -161,6 +161,10 @@ client.on("ready", () => {
 					required: true
 				}
 			]
+		},
+		{
+			name: "restart",
+			description: "Restarts the bot."
 		}
 	]).then(cmds => {
 		console.log("Finished loading all commands");
@@ -299,6 +303,12 @@ client.on("interactionCreate", (int) => {
 					int.reply("An unexpected error has occured: ```js\n" + e.stack + "```");
 				});
 			});
+		} else if(int.commandName == "restart"){
+			var devs = readJson("worthy.json");
+			if(!devs.devlist.includes(int.user.id)) return int.reply(":x: Access denied");
+			int.reply("Restarting...").then(msg => {
+				process.exit(69420);
+			});
 		}
 	} else if(int.isButton()){
 		if(int.customId.startsWith("cat")){
@@ -325,4 +335,10 @@ client.on("interactionCreate", (int) => {
 			});
 		}
 	}
+});
+
+
+process.on("exit", (code) => {
+	console.log("Exiting with code", code);
+	client.destroy();
 });
