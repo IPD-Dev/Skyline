@@ -149,18 +149,54 @@ client.on("ready", () => {
 		{
 			name: "invite",
 			description: "Provides an invite link for the bot"
+		},
+		{
+			name: "unban",
+			description: "Unbans a banned member.",
+			options: [
+				{
+					name: "user",
+					description: "User to unban, can be username, tag or id.",
+					type: 3,
+					required: true
+				}
+			]
 		}
 	]).then(cmds => {
 		console.log("Finished loading all commands");
 	});
 });
 
+function getType(userMention){
+	var type = "";
+	if(userMention.toString().includes("#")){
+	  // Suspect that the user mention is a tag
+	  if(userMention.match(/#/g).length > 1) return type = "Invalid";
+	  var parts = userMention.split("#");
+	  var username = parts[0];
+	  var discriminator = parts[1];
+	  var numFree = discriminator.toString().replace(/[0-9]/g, "");
+	  if(numFree !== "") return type = "Invalid";
+	  if(discriminator.toString().length > 4 || discriminator.toString().length < 4) return type = "Invalid";
+	  type = "Tag";
+	} else if(userMention.toString().replace(/[0-9]/g, "") == ""){
+	  var date = new Date(parseInt(userMention)/4194304+1420070400000);
+	  if(date == "Invalid Date") return type = "Invalid";
+	  type = "ID";
+	} else if(typeof(userMention) == "string"){
+	  type = "Username";
+	} else{
+	  type = "Invalid";
+	}
+	return type;
+}
+
 client.on("interactionCreate", (int) => {
 	if(int.isCommand()){
 		if(int.commandName == "ping"){
 			int.reply(`Yup, I'm alive (${client.ws.ping} ms)`);
 		} else if(int.commandName == "activity"){
-			var devs = readJson("devs.json");
+			var devs = readJson("worthy.json");
 			if(!devs.devlist.includes(int.user.id)) return int.reply(":x: Access denied");
 			if(int.options.getString("activity") !== null){
 				stopLoop();
@@ -171,7 +207,7 @@ client.on("interactionCreate", (int) => {
 				int.reply("Resat activity, and started activity loop.");
 			}
 		} else if(int.commandName == "eval"){
-			var devs = readJson("devs.json");
+			var devs = readJson("worthy.json");
 			if(!devs.devlist.includes(int.user.id)) return int.reply(":x: Access denied");
 			try{
 				int.reply(new String(eval(int.options.getString("code"))).valueOf()).catch(e => {});
@@ -183,14 +219,14 @@ client.on("interactionCreate", (int) => {
 			var mem = int.guild.members.cache.get(int.user.id);
 			if(!mem.permissions.has("KICK_MEMBERS")) return int.reply(":x: You do not have permissions to kick users.");
 			var mem2 = int.guild.members.cache.get(int.options.getUser("user").id);
-			if(!mem.kickable) return int.reply(":x: I cannot kick this user!");
 			if(mem == mem2) return int.reply(":x: You cannot kick yourself!");
 			mem2.kick(int.options.getString("reason")).then(() => {
 				var reason = "No reason specified.";
 				if(int.options.getString("reason") !== null) reason = int.options.getString("reason");
 				int.reply("Successfully kicked <@!" + int.options.getUser("user").id + "> with reason `" + reason + "`.");
 			}).catch(e => {
-				int.reply("An error occured with my code, please report this to " + Eco.tag + " or " + Helixu.tag + ": ```js\n" + e.stack + "```");
+				//int.reply("An error occured with my code, please report this to " + Eco.tag + " or " + Helixu.tag + ": ```js\n" + e.stack + "```");
+				int.reply(":x: I cannot kick this user!");
 			});
 		} else if(int.commandName == "ban"){
 			if(!int.guild) return int.reply(":x: This command cannot be used outside a guild.");
@@ -198,13 +234,13 @@ client.on("interactionCreate", (int) => {
 			if(!mem.permissions.has("BAN_MEMBERS")) return int.reply(":x: You do not have the permissions to ban users.");
 			var mem2 = int.guild.members.cache.get(int.options.getUser("user").id);
 			var reason = "No reason specified.";
-			if(!mem.bannable) return int.reply(":x: I cannot ban this user!");
 			if(mem == mem2) return int.reply(":x: You cannot ban yourself!");
 			if(int.options.getString("reason") !== null) reason = int.options.getString("reason");
 			mem2.ban({reason}).then(() => {
 				int.reply("Successfully banned <@!" + int.options.getUser("user").id + "> with reason `" + reason + "`.");
 			}).catch(e => {
-				int.reply("An error occured with my code, please report this to " + Eco.tag + " or " + Helixu.tag + ": ```js\n" + e.stack + "```");
+				//int.reply("An error occured with my code, please report this to " + Eco.tag + " or " + Helixu.tag + ": ```js\n" + e.stack + "```");
+				int.reply(":x: I cannot ban this user!");
 			});
 		} else if(int.commandName == "bonk"){
 			int.reply(`*${int.user.username} bonked ${int.options.getUser("user").username}* <a:getbonked:912473583488499743>`);
@@ -241,6 +277,28 @@ client.on("interactionCreate", (int) => {
 		} else if(int.commandName == "invite"){
 			var invite = "https://discord.com/api/oauth2/authorize?client_id=679066447942516760&permissions=397434776774&scope=bot%20applications.commands";
 			int.reply("To invite me to your own server, click [here](" + invite + ").");
+		} else if(int.commandName == "unban"){
+			if(!int.guild) return int.reply(":x: This command cannot be used outside a guild.");
+			if(!int.member.permissions.has(dc.Permissions.FLAGS.BAN_MEMBERS)) return int.reply(":x: You don't have the required permissions to use this command.");
+			if(!int.guild.members.cache.get(client.user.id).permissions.has(dc.Permissions.FLAGS.BAN_MEMBERS)) return int.reply(":x: I don't have the permissions to unban members.");
+			var userString = int.options.getString("user");
+			var type = getType(userString);
+			if(type == "Invalid") return int.reply(":x: The user specified is invalid.");
+			var banObj = null;
+			int.guild.bans.fetch().then(bans => {
+				bans.forEach(ban => {
+					if(type == "Tag" && ban.user.tag == userString) banObj = ban;
+					if(type == "ID" && ban.user.id.toString() == userString) banObj = ban;
+					if(type == "Username" && ban.user.username == userString) banObj = ban;
+				});
+				if(!banObj) return int.reply(":x: The user was not found, maybe someone already unbanned them?");
+				int.guild.members.unban(banObj.user.id).then(user => {
+					int.reply(`Successfully unbanned **${user.tag}**.`);
+				}).catch(e => {
+					console.log(e);
+					int.reply("An unexpected error has occured: ```js\n" + e.stack + "```");
+				});
+			});
 		}
 	} else if(int.isButton()){
 		if(int.customId.startsWith("cat")){
