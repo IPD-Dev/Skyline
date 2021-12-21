@@ -135,6 +135,18 @@ client.on("ready", () => {
 			]
 		},
 		{
+			name: "unbonk",
+			description: "bonk'nt someone",
+			options: [
+				{
+					name: "user",
+					description: "Whomst to unbonk",
+					type: 6,
+					required: true
+				}
+			]
+		},
+		{
 			name: "cat",
 			description: "Meow"
 		},
@@ -248,6 +260,8 @@ client.on("interactionCreate", (int) => {
 			});
 		} else if(int.commandName == "bonk"){
 			int.reply(`*${int.user.username} bonked ${int.options.getUser("user").username}* <a:getbonked:912473583488499743>`);
+		} else if(int.commandName == "unbonk"){
+			int.reply(`*${int.user.username} unbonked ${int.options.getUser("user").username}*`);
 		} else if(int.commandName == "cat"){
 			const row = new dc.MessageActionRow();
 			const btn = new dc.MessageButton();
